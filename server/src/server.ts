@@ -1,9 +1,18 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
+import { PORT } from './config/env';
+import { connectToDatabase } from './lib/mongodb';
 import app from './app';
 
-const PORT = Number(process.env.PORT) || 5500;
-app.listen(PORT, () => {
-  console.log(`🚀 API on http://localhost:${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await connectToDatabase();
+
+    app.listen(PORT, () => {
+      console.log(`🚀 API running at http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error('❌ ERR_SERVER: Unable to start server!', error);
+    process.exit(1);
+  }
+};
+
+startServer();
